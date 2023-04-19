@@ -10,14 +10,10 @@ import java.sql.SQLException;
  * The main application entrypoint.
  */
 public class RecorderApp {
-    public static void main(String[] args) {
-        try (var dataSource = new DataSource("jdbc:sqlite:runs.db")) {
-            FlatLightLaf.setup();
-            var window = new RecorderAppWindow(dataSource);
-            window.setVisible(true);
-        } catch (SQLException e) {
-            System.err.println("An SQL error occurred: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws SQLException {
+        DataSource dataSource = new DataSource("jdbc:sqlite:runs.db");
+        FlatLightLaf.setup();
+        var window = new RecorderAppWindow(dataSource);
+        window.setVisible(true);
     }
 }

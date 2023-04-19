@@ -9,9 +9,25 @@ public class RecorderAppWindow extends JFrame {
     public RecorderAppWindow(DataSource dataSource) {
         super("Run-Recorder");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        // TODO: Build UI
-        this.setPreferredSize(new Dimension(800, 600));
+        this.setContentPane(buildGui(dataSource));
+        this.setPreferredSize(new Dimension(1000, 600));
         this.pack();
         this.setLocationRelativeTo(null);
+    }
+
+    private Container buildGui(DataSource dataSource) {
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Run Records", new RunRecordsPanel(dataSource));
+        tabbedPane.addTab("Aggregate Statistics", buildAggregateStatisticsPanel(dataSource));
+        tabbedPane.addTab("Charts", buildChartsPanel(dataSource));
+        return tabbedPane;
+    }
+
+    private Container buildAggregateStatisticsPanel(DataSource dataSource) {
+        return new JPanel();
+    }
+
+    private Container buildChartsPanel(DataSource dataSource) {
+        return new JPanel();
     }
 }

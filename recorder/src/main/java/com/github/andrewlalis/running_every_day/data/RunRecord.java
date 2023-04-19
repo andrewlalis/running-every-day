@@ -1,6 +1,9 @@
 package com.github.andrewlalis.running_every_day.data;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -23,4 +26,38 @@ public record RunRecord(
         Duration duration,
         BigDecimal weightKg,
         String comment
-) {}
+) {
+    public BigDecimal distanceMeters() {
+        return distanceKm.multiply(BigDecimal.valueOf(1000));
+    }
+
+    public int durationSeconds () {
+        return (int) duration.getSeconds();
+    }
+
+    public BigDecimal weightGrams() {
+        return weightKg.multiply(BigDecimal.valueOf(1000));
+    }
+
+    public static class Mapper implements ResultSetMapper<RunRecord> {
+        @Override
+        public RunRecord map(ResultSet rs) throws SQLException {
+            long id = rs.getLong("id");
+            String dateStr = rs.getString("date");
+            String startTimeStr = rs.getString("start_time");
+            int distanceMeters = rs.getInt("distance");
+            int durationSeconds = rs.getInt("duration");
+            int weightGrams = rs.getInt("weight");
+            String comment = rs.getString("comment");
+            return new RunRecord(
+                    id,
+                    LocalDate.parse(dateStr),
+                    LocalTime.parse(startTimeStr),
+                    BigDecimal.valueOf(distanceMeters, 3).divide(BigDecimal.valueOf(1000, 3), RoundingMode.UNNECESSARY),
+                    Duration.ofSeconds(durationSeconds),
+                    BigDecimal.valueOf(weightGrams, 3).divide(BigDecimal.valueOf(1000, 3), RoundingMode.UNNECESSARY),
+                    comment
+            );
+        }
+    }
+}
