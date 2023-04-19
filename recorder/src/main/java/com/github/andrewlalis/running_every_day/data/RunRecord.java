@@ -35,6 +35,13 @@ public record RunRecord(
         return (int) duration.getSeconds();
     }
 
+    public String durationFormatted() {
+        if (duration.toHoursPart() > 0) {
+            return String.format("%d:%02d:%02d", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
+        }
+        return String.format("%02d:%02d", duration.toMinutesPart(), duration.toSecondsPart());
+    }
+
     public BigDecimal weightGrams() {
         return weightKg.multiply(BigDecimal.valueOf(1000));
     }

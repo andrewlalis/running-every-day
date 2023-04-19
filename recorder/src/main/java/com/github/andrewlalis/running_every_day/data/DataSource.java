@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A single object that serves as the application's data source.
+ */
 public class DataSource {
     private final Connection conn;
 

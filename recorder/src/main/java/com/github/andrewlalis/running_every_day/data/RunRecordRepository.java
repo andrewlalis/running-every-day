@@ -8,7 +8,7 @@ import java.util.List;
 
 public record RunRecordRepository(Connection conn) {
     public Page<RunRecord> findAll(Pagination pagination) throws SQLException {
-        String query = "SELECT id, date, start_time, distance, duration, weight, comment FROM run";
+        String query = "SELECT * FROM run ORDER BY date ASC";
         return pagination.execute(conn, query, new RunRecord.Mapper());
     }
 
