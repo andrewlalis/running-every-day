@@ -28,8 +28,12 @@ public class RunRecordsPanel extends JPanel {
         table.getColumnModel().getColumn(1).setMaxWidth(80);
         table.getColumnModel().getColumn(2).setMaxWidth(80);
         table.getColumnModel().getColumn(3).setMaxWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
         table.getColumnModel().getColumn(4).setMaxWidth(80);
         table.getColumnModel().getColumn(5).setMaxWidth(80);
+        for (int i = 0; i < 6; i++) {
+            table.getColumnModel().getColumn(i).setResizable(false);
+        }
         var scrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.add(scrollPane, BorderLayout.CENTER);
 
@@ -86,6 +90,13 @@ public class RunRecordsPanel extends JPanel {
 
         JPanel actionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton addActionButton = new JButton("Add a Record");
+        addActionButton.addActionListener(e -> {
+            var dialog = new AddRunRecordDialog(SwingUtilities.getWindowAncestor(this), dataSource);
+            dialog.setVisible(true);
+            if (dialog.isAdded()) {
+                tableModel.firstPage();
+            }
+        });
         actionsPanel.add(addActionButton);
         this.add(actionsPanel, BorderLayout.NORTH);
     }

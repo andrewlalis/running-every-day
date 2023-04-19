@@ -18,16 +18,8 @@ public class RecorderAppWindow extends JFrame {
     private Container buildGui(DataSource dataSource) {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Run Records", new RunRecordsPanel(dataSource));
-        tabbedPane.addTab("Aggregate Statistics", buildAggregateStatisticsPanel(dataSource));
-        tabbedPane.addTab("Charts", buildChartsPanel(dataSource));
+        tabbedPane.addTab("Aggregate Statistics", new JPanel());
+        tabbedPane.addTab("Charts", new ChartsPanel());
         return tabbedPane;
-    }
-
-    private Container buildAggregateStatisticsPanel(DataSource dataSource) {
-        return new JPanel();
-    }
-
-    private Container buildChartsPanel(DataSource dataSource) {
-        return new JPanel();
     }
 }

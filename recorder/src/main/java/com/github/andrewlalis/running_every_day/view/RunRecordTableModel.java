@@ -68,7 +68,7 @@ public class RunRecordTableModel extends AbstractTableModel {
         return currentPage;
     }
 
-    private void loadPage() {
+    public void loadPage() {
         try {
             var page = dataSource.runRecords().findAll(currentPage);
             cachedPageCount = (int) dataSource.runRecords().pageCount(currentPage.size());
