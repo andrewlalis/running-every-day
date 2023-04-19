@@ -6,6 +6,8 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSource {
     private final Connection conn;
@@ -17,6 +19,16 @@ public class DataSource {
 
     public RunRecordRepository runRecords() {
         return new RunRecordRepository(this.conn);
+    }
+
+    public <T> List<T> query(String query, ResultSetMapper<T> mapper) throws SQLException {
+        try (var stmt = conn.prepareStatement(query); var rs = stmt.executeQuery()) {
+            List<T> items = new ArrayList<>();
+            while (rs.next()) {
+                items.add(mapper.map(rs));
+            }
+            return items;
+        }
     }
 
     public void close() throws SQLException {

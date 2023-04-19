@@ -4,7 +4,6 @@ import com.github.andrewlalis.running_every_day.data.Page;
 import com.github.andrewlalis.running_every_day.data.RunRecord;
 
 import javax.swing.table.AbstractTableModel;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,6 @@ public class RunRecordTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (rowIndex < 0 || rowIndex >= records.size()) return null;
         RunRecord r = records.get(rowIndex);
-        DecimalFormat singleDigitFormat = new DecimalFormat("#,##0.0");
         return switch (columnIndex) {
             case 0 -> Long.toString(r.id());
             case 1 -> r.date().toString();
