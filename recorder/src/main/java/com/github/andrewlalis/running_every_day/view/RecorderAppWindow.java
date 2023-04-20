@@ -19,7 +19,7 @@ public class RecorderAppWindow extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Run Records", new RunRecordsPanel(dataSource));
         tabbedPane.addTab("Aggregate Statistics", new AggregateStatisticsPanel(dataSource));
-        tabbedPane.addTab("Charts", new ChartsPanel());
+        tabbedPane.addTab("Charts", new ChartsPanel(dataSource));
         return tabbedPane;
     }
 }

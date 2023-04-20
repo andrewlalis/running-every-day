@@ -2,6 +2,8 @@ package com.github.andrewlalis.running_every_day.data.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public final class Queries {
@@ -64,6 +66,18 @@ public final class Queries {
             pageCount++;
         }
         return pageCount;
+    }
+
+    public static <T> List<T> findAll(Connection c, String query, ResultSetMapper<T> mapper) throws SQLException {
+        try (var stmt = c.prepareStatement(query)) {
+            try (var rs = stmt.executeQuery()) {
+                List<T> items = new ArrayList<>();
+                while (rs.next()) {
+                    items.add(mapper.map(rs));
+                }
+                return items;
+            }
+        }
     }
 
     public static int update(Connection c, String query) throws SQLException {

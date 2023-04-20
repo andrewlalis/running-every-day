@@ -1,5 +1,8 @@
 package com.github.andrewlalis.running_every_day.view;
 
+import com.github.andrewlalis.running_every_day.data.db.DataSource;
+import com.github.andrewlalis.running_every_day.view.chart.ChartRenderingPanel;
+import com.github.andrewlalis.running_every_day.view.chart.WeightChartRenderer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -13,36 +16,18 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public class ChartsPanel extends JPanel {
-	private final JPanel drawingPanel = new JPanel();
+	private final DataSource dataSource;
 
-	public ChartsPanel() {
+	public ChartsPanel(DataSource dataSource) {
 		super(new BorderLayout());
+		this.dataSource = dataSource;
+		var drawingPanel = new ChartRenderingPanel(new WeightChartRenderer(dataSource));
 		this.add(drawingPanel, BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();
 		JButton drawButton = new JButton("Draw");
-		drawButton.addActionListener(e -> draw());
+//		drawButton.addActionListener(e -> draw());
 		buttonPanel.add(drawButton);
 		this.add(buttonPanel, BorderLayout.NORTH);
-	}
-
-	public void draw() {
-		TimeSeriesCollection ds = new TimeSeriesCollection();
-		TimeSeries ts = new TimeSeries("Data");
-		ts.add(new Day(16, 4, 2023), 45);
-		ts.add(new Day(17, 4, 2023), 50);
-		ts.add(new Day(18, 4, 2023), 52);
-		ts.add(new Day(19, 4, 2023), 65);
-		ds.addSeries(ts);
-
-		JFreeChart chart = ChartFactory.createXYLineChart(
-				"Test XY Line Chart",
-				"Date",
-				"Value",
-				ds
-		);
-		Graphics2D g2 = (Graphics2D) drawingPanel.getGraphics();
-		Rectangle2D area = new Rectangle2D.Float(0, 0, drawingPanel.getWidth(), drawingPanel.getHeight());
-		chart.draw(g2, area);
 	}
 }
