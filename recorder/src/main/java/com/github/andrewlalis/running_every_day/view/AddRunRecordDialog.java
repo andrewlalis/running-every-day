@@ -192,8 +192,8 @@ public class AddRunRecordDialog extends JDialog {
 			throw new IllegalArgumentException("Invalid or missing duration.");
 		}
 		int hours = 0;
-		int minutes = 0;
-		int seconds = 0;
+		int minutes;
+		int seconds;
 		if (parts.length == 3) {
 			hours = Integer.parseInt(parts[0]);
 			minutes = Integer.parseInt(parts[1]);
