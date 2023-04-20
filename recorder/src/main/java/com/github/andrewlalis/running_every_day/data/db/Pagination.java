@@ -1,4 +1,4 @@
-package com.github.andrewlalis.running_every_day.data;
+package com.github.andrewlalis.running_every_day.data.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;

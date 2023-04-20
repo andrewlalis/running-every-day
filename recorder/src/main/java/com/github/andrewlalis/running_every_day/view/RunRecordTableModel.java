@@ -1,8 +1,8 @@
 package com.github.andrewlalis.running_every_day.view;
 
-import com.github.andrewlalis.running_every_day.data.DataSource;
-import com.github.andrewlalis.running_every_day.data.Pagination;
 import com.github.andrewlalis.running_every_day.data.RunRecord;
+import com.github.andrewlalis.running_every_day.data.db.DataSource;
+import com.github.andrewlalis.running_every_day.data.db.Pagination;
 
 import javax.swing.table.AbstractTableModel;
 import java.sql.SQLException;
@@ -88,7 +88,7 @@ public class RunRecordTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 7;
+        return 8;
     }
 
     @Override
@@ -101,8 +101,9 @@ public class RunRecordTableModel extends AbstractTableModel {
             case 2 -> r.startTime().toString();
             case 3 -> r.distanceKm().toPlainString();
             case 4 -> r.durationFormatted();
-            case 5 -> r.weightKg().toPlainString();
-            case 6 -> r.comment();
+            case 5 -> r.averagePacePerKmFormatted();
+            case 6 -> r.weightKg().toPlainString();
+            case 7 -> r.comment();
             default -> null;
         };
     }
@@ -115,8 +116,9 @@ public class RunRecordTableModel extends AbstractTableModel {
             case 2 -> "Start Time";
             case 3 -> "Distance (Km)";
             case 4 -> "Duration";
-            case 5 -> "Weight (Kg)";
-            case 6 -> "Comment";
+            case 5 -> "Pace (Min/Km)";
+            case 6 -> "Weight (Kg)";
+            case 7 -> "Comment";
             default -> "Unknown Value";
         };
     }

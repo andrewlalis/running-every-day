@@ -1,4 +1,6 @@
-package com.github.andrewlalis.running_every_day.data;
+package com.github.andrewlalis.running_every_day.data.db;
+
+import com.github.andrewlalis.running_every_day.data.RunRecordRepository;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -6,8 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A single object that serves as the application's data source.
@@ -24,14 +24,8 @@ public class DataSource {
         return new RunRecordRepository(this.conn);
     }
 
-    public <T> List<T> query(String query, ResultSetMapper<T> mapper) throws SQLException {
-        try (var stmt = conn.prepareStatement(query); var rs = stmt.executeQuery()) {
-            List<T> items = new ArrayList<>();
-            while (rs.next()) {
-                items.add(mapper.map(rs));
-            }
-            return items;
-        }
+    public Connection conn() {
+        return conn;
     }
 
     public void close() throws SQLException {
@@ -64,7 +58,7 @@ public class DataSource {
         }
     }
 
-    private static String readResource(String name) {
+    public static String readResource(String name) {
         try (var in = DataSource.class.getClassLoader().getResourceAsStream(name)) {
             if (in == null) {
                 throw new RuntimeException("Missing resource: " + name);

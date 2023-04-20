@@ -1,6 +1,6 @@
 package com.github.andrewlalis.running_every_day.view;
 
-import com.github.andrewlalis.running_every_day.data.DataSource;
+import com.github.andrewlalis.running_every_day.data.db.DataSource;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

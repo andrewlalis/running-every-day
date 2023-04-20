@@ -1,7 +1,7 @@
 package com.github.andrewlalis.running_every_day;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.github.andrewlalis.running_every_day.data.DataSource;
+import com.github.andrewlalis.running_every_day.data.db.DataSource;
 import com.github.andrewlalis.running_every_day.view.RecorderAppWindow;
 import com.github.andrewlalis.running_every_day.view.WindowDataSourceCloser;
 

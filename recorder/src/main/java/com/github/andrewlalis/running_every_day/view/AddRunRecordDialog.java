@@ -1,6 +1,6 @@
 package com.github.andrewlalis.running_every_day.view;
 
-import com.github.andrewlalis.running_every_day.data.DataSource;
+import com.github.andrewlalis.running_every_day.data.db.DataSource;
 import com.github.andrewlalis.running_every_day.data.RunRecord;
 
 import javax.swing.*;
@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class AddRunRecordDialog extends JDialog {
 	private final DataSource dataSource;

@@ -1,6 +1,6 @@
 package com.github.andrewlalis.running_every_day.view;
 
-import com.github.andrewlalis.running_every_day.data.DataSource;
+import com.github.andrewlalis.running_every_day.data.db.DataSource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class RecorderAppWindow extends JFrame {
     private Container buildGui(DataSource dataSource) {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Run Records", new RunRecordsPanel(dataSource));
-        tabbedPane.addTab("Aggregate Statistics", new JPanel());
+        tabbedPane.addTab("Aggregate Statistics", new AggregateStatisticsPanel(dataSource));
         tabbedPane.addTab("Charts", new ChartsPanel());
         return tabbedPane;
     }

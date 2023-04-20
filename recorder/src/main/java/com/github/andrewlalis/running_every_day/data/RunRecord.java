@@ -1,5 +1,7 @@
 package com.github.andrewlalis.running_every_day.data;
 
+import com.github.andrewlalis.running_every_day.data.db.ResultSetMapper;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
@@ -44,6 +46,16 @@ public record RunRecord(
 
     public BigDecimal weightGrams() {
         return weightKg.multiply(BigDecimal.valueOf(1000));
+    }
+
+    public Duration averagePacePerKm() {
+        long msPerKm = (long) Math.floor(duration.toMillis() / distanceKm.doubleValue());
+        return Duration.ofMillis(msPerKm);
+    }
+
+    public String averagePacePerKmFormatted() {
+        var dur = averagePacePerKm();
+        return String.format("%02d:%02d.%03d", dur.toMinutesPart(), dur.toSecondsPart(), dur.toMillisPart());
     }
 
     public static class Mapper implements ResultSetMapper<RunRecord> {
