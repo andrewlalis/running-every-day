@@ -3,6 +3,7 @@ package com.github.andrewlalis.running_every_day.view;
 import com.github.andrewlalis.running_every_day.data.db.DataSource;
 import com.github.andrewlalis.running_every_day.view.chart.ChartRenderingPanel;
 import com.github.andrewlalis.running_every_day.view.chart.WeightChartRenderer;
+import com.github.andrewlalis.running_every_day.view.chart.WeightChartRenderer2;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -21,7 +22,7 @@ public class ChartsPanel extends JPanel {
 	public ChartsPanel(DataSource dataSource) {
 		super(new BorderLayout());
 		this.dataSource = dataSource;
-		var drawingPanel = new ChartRenderingPanel(new WeightChartRenderer(dataSource));
+		var drawingPanel = new ChartRenderingPanel(new WeightChartRenderer2(dataSource));
 		this.add(drawingPanel, BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();

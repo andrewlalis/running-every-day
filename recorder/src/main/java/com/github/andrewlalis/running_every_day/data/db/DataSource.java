@@ -1,5 +1,6 @@
 package com.github.andrewlalis.running_every_day.data.db;
 
+import com.github.andrewlalis.running_every_day.Resources;
 import com.github.andrewlalis.running_every_day.data.RunRecordRepository;
 
 import java.io.IOException;
@@ -53,19 +54,12 @@ public class DataSource {
         }
         if (shouldInitSchema) {
             try (var stmt = this.conn.createStatement()) {
-                stmt.execute(readResource("schema.sql"));
+                String query = Resources.readResourceAsString("schema.sql");
+                stmt.execute(query);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
             }
-        }
-    }
-
-    public static String readResource(String name) {
-        try (var in = DataSource.class.getClassLoader().getResourceAsStream(name)) {
-            if (in == null) {
-                throw new RuntimeException("Missing resource: " + name);
-            }
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 }

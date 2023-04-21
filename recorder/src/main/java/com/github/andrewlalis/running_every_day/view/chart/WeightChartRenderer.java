@@ -6,18 +6,18 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import java.awt.*;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.util.List;
 
 public class WeightChartRenderer extends JFreeChartRenderer {
-    private record WeightDatapoint(int weightGrams, LocalDate date){}
+    private record WeightDatapoint(double weightKg, LocalDate date){}
 
     private final DataSource dataSource;
 
@@ -30,26 +30,36 @@ public class WeightChartRenderer extends JFreeChartRenderer {
         TimeSeries series = new TimeSeries("Weight", "Date", "Weight (Kg)");
         List<WeightDatapoint> datapoints = Queries.findAll(
                 dataSource.conn(),
-                "SELECT date, weight FROM run ORDER BY date ASC",
+                "SELECT date, weight FROM run ORDER BY date ASC LIMIT 50",
                 rs -> new WeightDatapoint(
-                        rs.getInt(2),
+                        rs.getInt(2) / 1000.0,
                         LocalDate.parse(rs.getString(1))
                 )
         );
+        double minWeight = Double.MAX_VALUE;
+        double maxWeight = Double.MIN_VALUE;
         for (var dp : datapoints) {
-            series.add(new Day(dp.date.getDayOfMonth(), dp.date.getMonthValue(), dp.date.getYear()), dp.weightGrams);
+            minWeight = Math.min(minWeight, dp.weightKg);
+            maxWeight = Math.max(maxWeight, dp.weightKg);
+            series.add(new Day(dp.date.getDayOfMonth(), dp.date.getMonthValue(), dp.date.getYear()), dp.weightKg);
         }
         TimeSeriesCollection dataset = new TimeSeriesCollection(series);
 
-        DateAxis domainAxis = new DateAxis("Date");
+        DateAxis domainAxis = new DateAxis();
         domainAxis.setVerticalTickLabels(true);
         domainAxis.setDateFormatOverride(DateFormat.getDateInstance());
+
         NumberAxis rangeAxis = new NumberAxis("Weight (Kg)");
-        rangeAxis.setAutoRange(true);
-        XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
+        rangeAxis.setRangeWithMargins(minWeight, maxWeight);
 
-        XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
+        XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, new XYLineAndShapeRenderer());
+        var chart = new JFreeChart("Weight", plot);
+        chart.removeLegend();
+        return chart;
+    }
 
-        return new JFreeChart(plot);
+    @Override
+    protected void applyCustomStyles(JFreeChart chart) {
+        applyStandardXYLineColor(chart, Color.BLUE);
     }
 }
