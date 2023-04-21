@@ -14,25 +14,25 @@ import java.awt.*;
 import java.text.DateFormat;
 import java.time.LocalDate;
 
-public abstract class DateSeriesChartRenderer extends JFreeChartRenderer {
-    protected record Datapoint (double value, LocalDate date) {}
+public class DateSeriesChartRenderer extends JFreeChartRenderer {
+    public record Datapoint (double value, LocalDate date) {}
 
     private final String title;
     private final Paint linePaint;
+    private final DateSeriesDataGenerator dataGenerator;
 
-    protected DateSeriesChartRenderer(String title, Paint linePaint) {
+    protected DateSeriesChartRenderer(String title, Paint linePaint, DateSeriesDataGenerator dataGenerator) {
         this.title = title;
         this.linePaint = linePaint;
+        this.dataGenerator = dataGenerator;
     }
-
-    protected abstract Datapoint[] getData() throws Exception;
 
     @Override
     protected JFreeChart getChart() throws Exception {
         TimeSeries series = new TimeSeries("Series");
         double minValue = Double.MAX_VALUE;
         double maxValue = Double.MIN_VALUE;
-        for (var d : getData()) {
+        for (var d : dataGenerator.generate()) {
             minValue = Math.min(minValue, d.value());
             maxValue = Math.max(maxValue, d.value());
             series.add(

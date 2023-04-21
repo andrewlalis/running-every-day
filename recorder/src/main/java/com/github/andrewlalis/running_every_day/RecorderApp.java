@@ -21,6 +21,7 @@ public class RecorderApp {
             var window = new RecorderAppWindow(dataSource);
             System.out.println("Initialized App Window");
             window.addWindowListener(new WindowDataSourceCloser(dataSource));
+            System.out.println("Added App Window close listener");
             window.setVisible(true);
             System.out.println("Set App Window as visible");
         } catch (SQLException e) {

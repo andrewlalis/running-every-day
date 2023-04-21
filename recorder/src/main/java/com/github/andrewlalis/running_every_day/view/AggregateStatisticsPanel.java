@@ -34,7 +34,7 @@ public class AggregateStatisticsPanel extends JPanel {
         controlsPanel.add(refreshButton);
         this.add(controlsPanel, BorderLayout.NORTH);
 
-        SwingUtilities.invokeLater(this::refreshStats);
+//        SwingUtilities.invokeLater(this::refreshStats);
     }
 
     private void refreshStats() {
