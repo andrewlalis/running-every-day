@@ -3,13 +3,18 @@ package com.github.andrewlalis.running_every_day.view.chart;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.function.Consumer;
 
-public class ChartRenderingPanel extends JPanel {
+public class ChartRenderingPanel extends JPanel implements Consumer<ChartRenderer> {
     private ChartRenderer renderer;
 
     public void setRenderer(ChartRenderer renderer) {
         this.renderer = renderer;
         this.repaint();
+    }
+
+    public ChartRenderer getRenderer() {
+        return renderer;
     }
 
     @Override
@@ -22,5 +27,10 @@ public class ChartRenderingPanel extends JPanel {
         } else {
             g.drawString("No chart to render", 50, 50);
         }
+    }
+
+    @Override
+    public void accept(ChartRenderer chartRenderer) {
+        setRenderer(chartRenderer);
     }
 }

@@ -10,15 +10,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A pre-defined list of chart renderers that can be used.
+ */
 public final class DateSeriesCharts {
     public static ChartRenderer weight(DataSource dataSource, DateRange dateRange) {
-        String baseQuery = "SELECT weight, date FROM run";
-        String dateRangeConditions = buildDateRangeConditions(dateRange);
-        if (dateRangeConditions != null) {
-            baseQuery += " WHERE " + dateRangeConditions;
-        }
-        baseQuery += " ORDER BY date ASC";
-        final String query = baseQuery;
+        final String query = applyDateRange("SELECT weight, date FROM run", dateRange) + " ORDER BY date ASC";
         return new DateSeriesChartRenderer(
                 "Weight (Kg)",
                 Color.BLUE,
@@ -34,13 +31,7 @@ public final class DateSeriesCharts {
     }
 
     public static ChartRenderer pace(DataSource dataSource, DateRange dateRange) {
-        String baseQuery = "SELECT * FROM run";
-        String dateRangeConditions = buildDateRangeConditions(dateRange);
-        if (dateRangeConditions != null) {
-            baseQuery += " WHERE " + dateRangeConditions;
-        }
-        baseQuery += " ORDER BY date ASC";
-        final String query = baseQuery;
+        final String query = applyDateRange("SELECT * FROM run", dateRange) + " ORDER BY date ASC";
         final var mapper = new RunRecord.Mapper();
         return new DateSeriesChartRenderer(
                 "Pace (Min/Km)",
@@ -59,6 +50,35 @@ public final class DateSeriesCharts {
         );
     }
 
+    public static ChartRenderer totalDistance(DataSource dataSource, DateRange dateRange) {
+        final String query = applyDateRange("SELECT distance, date FROM run", dateRange) + " ORDER BY date ASC";
+        return new DateSeriesChartRenderer(
+                "Total Distance (Km)",
+                Color.GREEN,
+                () -> {
+                    List<DateSeriesChartRenderer.Datapoint> items = Queries.findAll(
+                            dataSource.conn(),
+                            query,
+                            rs -> new DateSeriesChartRenderer.Datapoint(
+                                    rs.getInt(1) / 1000.0,
+                                    LocalDate.parse(rs.getString(2))
+                            )
+                    );
+                    double total = 0;
+                    // If a start date is specified, first compute the total distance ran up until then.
+                    if (dateRange != null && dateRange.start() != null) {
+                        total = Queries.getLong(dataSource.conn(), "SELECT SUM(distance) FROM run WHERE date < '" + dateRange.start() + "'") / 1000.0;
+                    }
+                    List<DateSeriesChartRenderer.Datapoint> finalItems = new ArrayList<>(items.size());
+                    for (var d : items) {
+                        total += d.value();
+                        finalItems.add(new DateSeriesChartRenderer.Datapoint(total, d.date()));
+                    }
+                    return finalItems;
+                }
+        );
+    }
+
     private static String buildDateRangeConditions(DateRange dateRange) {
         if (dateRange == null || (dateRange.start() == null && dateRange.end() == null)) {
             return null;
@@ -71,5 +91,13 @@ public final class DateSeriesCharts {
             conditions.add("date <= '" + dateRange.end() + "'");
         }
         return String.join(" AND ", conditions);
+    }
+
+    private static String applyDateRange(String query, DateRange range) {
+        String rangeConditions = buildDateRangeConditions(range);
+        if (rangeConditions != null) {
+            return query + " WHERE " + rangeConditions;
+        }
+        return query;
     }
 }

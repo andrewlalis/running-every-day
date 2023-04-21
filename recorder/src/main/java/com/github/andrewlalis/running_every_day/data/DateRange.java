@@ -14,4 +14,8 @@ public record DateRange(LocalDate start, LocalDate end) {
     public static DateRange unbounded() {
         return new DateRange(null, null);
     }
+
+    public static DateRange lastNWeeks(int n) {
+        return after(LocalDate.now().minusWeeks(n));
+    }
 }

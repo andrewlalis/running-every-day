@@ -97,10 +97,6 @@ public class RunRecordsPanel extends JPanel {
         paginationPanel.add(lastPageButton);
 
         this.add(paginationPanel, BorderLayout.SOUTH);
-//        SwingUtilities.invokeLater(() -> {
-//            tableModel.firstPage();
-//            updateButtonStates();
-//        });
 
         JPanel actionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton addActionButton = new JButton("Add a Record");

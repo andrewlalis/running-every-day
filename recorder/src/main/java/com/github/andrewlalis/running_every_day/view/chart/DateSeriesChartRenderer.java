@@ -12,8 +12,16 @@ import org.jfree.data.xy.XYDataset;
 
 import java.awt.*;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 
+/**
+ * An extension of the generic JFreeChartRenderer which handles formatting for
+ * date-series charts, which are a common type of chart that we use. This way,
+ * you only need to specify a title, paint for the line, and a data generator
+ * that produces data points.
+ */
 public class DateSeriesChartRenderer extends JFreeChartRenderer {
     public record Datapoint (double value, LocalDate date) {}
 
@@ -48,11 +56,12 @@ public class DateSeriesChartRenderer extends JFreeChartRenderer {
         XYDataset dataset = new TimeSeriesCollection(series);
 
         DateAxis domainAxis = new DateAxis();
-        domainAxis.setVerticalTickLabels(true);
+        domainAxis.setTickLabelsVisible(true);
         domainAxis.setDateFormatOverride(DateFormat.getDateInstance());
 
         NumberAxis rangeAxis = new NumberAxis();
         rangeAxis.setRangeWithMargins(minValue, maxValue);
+        rangeAxis.setNumberFormatOverride(NumberFormat.getNumberInstance(Locale.US));
 
         XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, new XYLineAndShapeRenderer());
         var chart = new JFreeChart(title, plot);
