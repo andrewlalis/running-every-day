@@ -5,6 +5,8 @@ import com.github.andrewlalis.running_every_day.data.db.DataSource;
 import com.github.andrewlalis.running_every_day.data.db.Queries;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,17 +24,28 @@ public class RunRecordsPanel extends JPanel {
     private final DataSource dataSource;
 
     private final RunRecordTableModel tableModel;
-    private final JTextField currentPageField;
-    private final JButton firstPageButton;
-    private final JButton previousPageButton;
-    private final JButton nextPageButton;
-    private final JButton lastPageButton;
+    private final JTextField currentPageField = new JTextField("1", 3);
+    private final JButton firstPageButton = new JButton("First Page");
+    private final JButton previousPageButton = new JButton("Previous Page");
+    private final JButton nextPageButton = new JButton("Next Page");
+    private final JButton lastPageButton = new JButton("Last Page");
 
     public RunRecordsPanel(DataSource dataSource) {
         super(new BorderLayout());
         this.dataSource = dataSource;
         this.tableModel = new RunRecordTableModel(dataSource);
+        tableModel.addTableModelListener(e -> updateButtonStates());
 
+        this.add(buildTablePanel(), BorderLayout.CENTER);
+        this.add(buildPaginationPanel(), BorderLayout.SOUTH);
+        this.add(buildActionsPanel(), BorderLayout.NORTH);
+    }
+
+    public void init() {
+        SwingUtilities.invokeLater(tableModel::firstPage);
+    }
+
+    private Container buildTablePanel() {
         var table = new JTable(tableModel);
         table.getTableHeader().setReorderingAllowed(false);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
@@ -48,56 +61,10 @@ public class RunRecordsPanel extends JPanel {
         for (int i = 0; i < 7; i++) {
             table.getColumnModel().getColumn(i).setResizable(false);
         }
-        var scrollPane = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        this.add(scrollPane, BorderLayout.CENTER);
+        return new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    }
 
-        JPanel paginationPanel = new JPanel(new GridLayout(1, 6));
-        firstPageButton = new JButton("First Page");
-        firstPageButton.addActionListener(e -> {
-            tableModel.firstPage();
-            updateButtonStates();
-        });
-        previousPageButton = new JButton("Previous Page");
-        previousPageButton.addActionListener(e -> {
-            tableModel.previousPage();
-            updateButtonStates();
-        });
-        nextPageButton = new JButton("Next Page");
-        nextPageButton.addActionListener(e -> {
-            tableModel.nextPage();
-            updateButtonStates();
-        });
-        lastPageButton = new JButton("Last Page");
-        lastPageButton.addActionListener(e -> {
-            tableModel.lastPage();
-            updateButtonStates();
-        });
-
-        JPanel currentPagePanel = new JPanel();
-        currentPagePanel.add(new JLabel("Current Page: "));
-        this.currentPageField = new JTextField("1", 3);
-        currentPagePanel.add(this.currentPageField);
-
-        JPanel pageSizePanel = new JPanel();
-        pageSizePanel.add(new JLabel("Page Size: "));
-        JComboBox<Integer> pageSizeSelector = new JComboBox<>(new Integer[]{5, 10, 20, 50, 100, 500});
-        pageSizeSelector.setSelectedItem(tableModel.getPagination().size());
-        pageSizeSelector.addItemListener(e -> {
-            int size = (int) e.getItem();
-            tableModel.setPageSize(size);
-            updateButtonStates();
-        });
-        pageSizePanel.add(pageSizeSelector);
-
-        paginationPanel.add(firstPageButton);
-        paginationPanel.add(previousPageButton);
-        paginationPanel.add(currentPagePanel);
-        paginationPanel.add(pageSizePanel);
-        paginationPanel.add(nextPageButton);
-        paginationPanel.add(lastPageButton);
-
-        this.add(paginationPanel, BorderLayout.SOUTH);
-
+    private JPanel buildActionsPanel() {
         JPanel actionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton addActionButton = new JButton("Add a Record");
         addActionButton.addActionListener(e -> {
@@ -111,7 +78,37 @@ public class RunRecordsPanel extends JPanel {
         JButton generateRandomDataButton = new JButton("Generate Random Data");
         generateRandomDataButton.addActionListener(e -> generateRandomData());
         actionsPanel.add(generateRandomDataButton);
-        this.add(actionsPanel, BorderLayout.NORTH);
+        return actionsPanel;
+    }
+
+    private JPanel buildPaginationPanel() {
+        JPanel paginationPanel = new JPanel(new GridLayout(1, 6));
+        firstPageButton.addActionListener(e -> tableModel.firstPage());
+        previousPageButton.addActionListener(e -> tableModel.previousPage());
+        nextPageButton.addActionListener(e -> tableModel.nextPage());
+        lastPageButton.addActionListener(e -> tableModel.lastPage());
+
+        JPanel currentPagePanel = new JPanel();
+        currentPagePanel.add(new JLabel("Current Page: "));
+        currentPagePanel.add(this.currentPageField);
+
+        JPanel pageSizePanel = new JPanel();
+        pageSizePanel.add(new JLabel("Page Size: "));
+        JComboBox<Integer> pageSizeSelector = new JComboBox<>(new Integer[]{5, 10, 20, 50, 100, 500});
+        pageSizeSelector.setSelectedItem(tableModel.getPagination().size());
+        pageSizeSelector.addItemListener(e -> {
+            int size = (int) e.getItem();
+            tableModel.setPageSize(size);
+        });
+        pageSizePanel.add(pageSizeSelector);
+
+        paginationPanel.add(firstPageButton);
+        paginationPanel.add(previousPageButton);
+        paginationPanel.add(currentPagePanel);
+        paginationPanel.add(pageSizePanel);
+        paginationPanel.add(nextPageButton);
+        paginationPanel.add(lastPageButton);
+        return paginationPanel;
     }
 
     private void updateButtonStates() {
@@ -151,7 +148,6 @@ public class RunRecordsPanel extends JPanel {
             c.commit();
             c.setAutoCommit(true);
             tableModel.firstPage();
-            updateButtonStates();
         } catch (SQLException e) {
             e.printStackTrace();
         }

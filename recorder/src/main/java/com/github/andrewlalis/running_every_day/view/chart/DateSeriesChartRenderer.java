@@ -53,6 +53,9 @@ public class DateSeriesChartRenderer extends JFreeChartRenderer {
                     false
             );
         }
+        if (series.getItemCount() < 2) {
+            throw new IllegalStateException("Not enough data.");
+        }
         XYDataset dataset = new TimeSeriesCollection(series);
 
         DateAxis domainAxis = new DateAxis();

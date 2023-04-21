@@ -20,6 +20,7 @@ public class WindowDataSourceCloser extends WindowAdapter {
     public void windowClosing(WindowEvent e) {
         try {
             dataSource.close();
+            System.out.println("Data source closed");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

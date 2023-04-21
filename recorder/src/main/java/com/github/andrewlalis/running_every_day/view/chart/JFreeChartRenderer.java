@@ -17,14 +17,10 @@ public abstract class JFreeChartRenderer implements ChartRenderer {
     protected abstract JFreeChart getChart() throws Exception;
     protected void applyCustomStyles(JFreeChart chart) {}
 
-    public void refresh() {
-        try {
-            lastChart = getChart();
-            standardChartTheme.apply(lastChart);
-            applyCustomStyles(lastChart);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void refresh() throws Exception {
+        lastChart = getChart();
+        standardChartTheme.apply(lastChart);
+        applyCustomStyles(lastChart);
     }
 
     @Override
@@ -35,7 +31,7 @@ public abstract class JFreeChartRenderer implements ChartRenderer {
             }
             lastChart.draw(graphics, area);
         } catch (Exception e) {
-            graphics.setColor(Color.BLACK);
+            graphics.setColor(Color.RED);
             graphics.setBackground(Color.WHITE);
             graphics.fill(area);
             graphics.drawString("Error: " + e.getMessage(), 20, 40);

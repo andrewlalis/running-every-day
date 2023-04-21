@@ -24,6 +24,8 @@ public class RecorderApp {
             System.out.println("Added App Window close listener");
             window.setVisible(true);
             System.out.println("Set App Window as visible");
+            window.initComponentData();
+            System.out.println("Initialized component data");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Failed to open database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
