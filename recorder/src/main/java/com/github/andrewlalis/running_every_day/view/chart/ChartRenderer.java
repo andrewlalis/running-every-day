@@ -4,5 +4,5 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public interface ChartRenderer {
-    void render(Graphics2D graphics, Rectangle2D area);
+    void render(Graphics2D graphics, Rectangle2D area, float textScale);
 }

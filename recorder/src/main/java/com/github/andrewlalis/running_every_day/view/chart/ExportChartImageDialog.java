@@ -18,6 +18,7 @@ public class ExportChartImageDialog extends JDialog {
 
     private final SpinnerNumberModel widthSpinnerModel = new SpinnerNumberModel(1920, 10, 10000, 1);
     private final SpinnerNumberModel heightSpinnerModel = new SpinnerNumberModel(1080, 10, 10000, 1);
+    private final SpinnerNumberModel textScaleSpinnerModel = new SpinnerNumberModel(1.0, 0.01, 25.0, 0.01);
     private final JTextField filePathField = new JTextField();
     private Path currentFilePath = Path.of(".").toAbsolutePath().resolve("chart.png");
 
@@ -39,8 +40,10 @@ public class ExportChartImageDialog extends JDialog {
         c.gridy = 1;
         formPanel.add(new JLabel("Height (px)"), c);
         c.gridy = 2;
-        formPanel.add(new JLabel("File"), c);
+        formPanel.add(new JLabel("Text Scale"), c);
         c.gridy = 3;
+        formPanel.add(new JLabel("File"), c);
+        c.gridy = 4;
         JButton selectFileButton = new JButton("Select File");
         selectFileButton.addActionListener(e -> browseForFilePath());
         formPanel.add(selectFileButton, c);
@@ -57,8 +60,12 @@ public class ExportChartImageDialog extends JDialog {
         JSpinner heightSpinner = new JSpinner(heightSpinnerModel);
         heightSpinner.setLocale(Locale.US);
         formPanel.add(heightSpinner, c);
-
         c.gridy = 2;
+        JSpinner textScaleSpinner = new JSpinner(textScaleSpinnerModel);
+        textScaleSpinner.setLocale(Locale.US);
+        formPanel.add(textScaleSpinner, c);
+
+        c.gridy = 3;
         filePathField.setEditable(false);
         filePathField.setText(currentFilePath.toAbsolutePath().toString());
         filePathField.addMouseListener(new MouseAdapter() {
@@ -110,8 +117,9 @@ public class ExportChartImageDialog extends JDialog {
         }
         int width = (int) widthSpinnerModel.getValue();
         int height = (int) heightSpinnerModel.getValue();
+        double textScale = (Double) textScaleSpinnerModel.getValue();
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-        chartRenderer.render(img.createGraphics(), new Rectangle2D.Float(0, 0, width, height));
+        chartRenderer.render(img.createGraphics(), new Rectangle2D.Float(0, 0, width, height), (float) textScale);
         try {
             ImageIO.write(img, "png", currentFilePath.toFile());
             JOptionPane.showMessageDialog(

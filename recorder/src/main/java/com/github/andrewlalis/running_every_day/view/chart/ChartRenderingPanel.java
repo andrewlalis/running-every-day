@@ -23,7 +23,7 @@ public class ChartRenderingPanel extends JPanel implements Consumer<ChartRendere
         if (renderer != null) {
             Graphics2D g2 = (Graphics2D) g;
             Rectangle2D area = new Rectangle2D.Float(0, 0, this.getWidth(), this.getHeight());
-            renderer.render(g2, area);
+            renderer.render(g2, area, 1);
         } else {
             g.drawString("No chart to render", 50, 50);
         }

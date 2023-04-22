@@ -5,8 +5,6 @@ import com.github.andrewlalis.running_every_day.data.db.DataSource;
 import com.github.andrewlalis.running_every_day.data.db.Queries;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,6 +22,10 @@ public class RunRecordsPanel extends JPanel {
     private final DataSource dataSource;
 
     private final RunRecordTableModel tableModel;
+    private final JTable table;
+
+    private final JButton deleteRecordButton = new JButton("Delete Record");
+
     private final JTextField currentPageField = new JTextField("1", 3);
     private final JButton firstPageButton = new JButton("First Page");
     private final JButton previousPageButton = new JButton("Previous Page");
@@ -34,6 +36,7 @@ public class RunRecordsPanel extends JPanel {
         super(new BorderLayout());
         this.dataSource = dataSource;
         this.tableModel = new RunRecordTableModel(dataSource);
+        this.table = new JTable(tableModel);
         tableModel.addTableModelListener(e -> updateButtonStates());
 
         this.add(buildTablePanel(), BorderLayout.CENTER);
@@ -46,7 +49,6 @@ public class RunRecordsPanel extends JPanel {
     }
 
     private Container buildTablePanel() {
-        var table = new JTable(tableModel);
         table.getTableHeader().setReorderingAllowed(false);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         table.getColumnModel().getColumn(0).setMaxWidth(50);
@@ -61,6 +63,9 @@ public class RunRecordsPanel extends JPanel {
         for (int i = 0; i < 7; i++) {
             table.getColumnModel().getColumn(i).setResizable(false);
         }
+        table.getSelectionModel().addListSelectionListener(e -> {
+            deleteRecordButton.setEnabled(!e.getValueIsAdjusting() && tableModel.getRecordIdAtRow(table.getSelectedRow()) != -1);
+        });
         return new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
 
@@ -78,6 +83,32 @@ public class RunRecordsPanel extends JPanel {
         JButton generateRandomDataButton = new JButton("Generate Random Data");
         generateRandomDataButton.addActionListener(e -> generateRandomData());
         actionsPanel.add(generateRandomDataButton);
+        deleteRecordButton.addActionListener(e -> {
+            long id = tableModel.getRecordIdAtRow(table.getSelectedRow());
+            if (id != -1) {
+                int result = JOptionPane.showConfirmDialog(
+                        this,
+                        "Are you sure you want to delete this record? This is permanent.",
+                        "Confirm Deletion",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
+                if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        dataSource.runRecords().delete(id);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "An SQL Exception occurred: " + ex.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
+            }
+        });
+        actionsPanel.add(deleteRecordButton);
         return actionsPanel;
     }
 

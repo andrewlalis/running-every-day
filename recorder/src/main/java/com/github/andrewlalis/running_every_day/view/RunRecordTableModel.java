@@ -81,6 +81,11 @@ public class RunRecordTableModel extends AbstractTableModel {
         }
     }
 
+    public long getRecordIdAtRow(int row) {
+        if (row < 0 || row >= records.size()) return -1;
+        return records.get(row).id();
+    }
+
     @Override
     public int getRowCount() {
         return records.size();

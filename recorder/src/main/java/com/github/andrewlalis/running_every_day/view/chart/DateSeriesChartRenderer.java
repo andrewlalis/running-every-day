@@ -73,7 +73,7 @@ public class DateSeriesChartRenderer extends JFreeChartRenderer {
     }
 
     @Override
-    protected void applyCustomStyles(JFreeChart chart) {
-        applyStandardXYLineColor(chart, linePaint);
+    protected void applyCustomStyles(JFreeChart chart, float textScale) {
+        applyStandardXYLineColor(chart, linePaint, textScale);
     }
 }
